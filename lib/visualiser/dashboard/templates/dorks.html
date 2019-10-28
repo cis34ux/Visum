@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+{% set active_page = url_for(request.endpoint) %}
+<html>
+  <head> 
+    {% include 'head.html' %}
+  </head>
+  <body>
+    <header class="header">   
+        {% include 'header.html' %}
+    </header>
+    <div class="d-flex align-items-stretch">
+      <!-- Sidebar Navigation-->
+      <nav id="sidebar">
+          {% include 'sidebar.html' %}
+      </nav>
+      <!-- Sidebar Navigation end-->
+      <div class="page-content">
+        <!-- Breadcrumb-->
+        {% include 'breadcrumb.html' %}
+
+        <section class="no-padding-top no-padding-bottom">
+          <div class="container-fluid">
+            <div class="row">
+
+            </div>
+          </div>
+        </section>
+
+        <footer class="footer">
+            {% include 'footer.html' %}
+        </footer>
+      </div>
+    </div>
+    <!-- JavaScript files-->
+    {% include 'javascript.html' %}
+  </body>
+</html>

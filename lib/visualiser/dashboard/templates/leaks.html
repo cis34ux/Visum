@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+{% set active_page = url_for(request.endpoint) %}
+<html>
+  <head> 
+    {% include 'head.html' %}
+  </head>
+  <body>
+    <header class="header">   
+        {% include 'header.html' %}
+    </header>
+    <div class="d-flex align-items-stretch">
+      <!-- Sidebar Navigation-->
+      <nav id="sidebar">
+          {% include 'sidebar.html' %}
+      </nav>
+      <!-- Sidebar Navigation end-->
+      <div class="page-content">
+        <!-- Breadcrumb-->
+        {% include 'breadcrumb.html' %}
+
+        {% if counts %}
+        <section class="no-padding-top no-padding-bottom">
+          <div class="container-fluid">
+            <div class="row">
+              {% for doc_type, logo in [('credentials', 'icon-user-1'), ('mails', 'fa fa-envelope')] %}
+                {% for source in ["pastebin"] %}
+                  <div class="col-md-6 col-lg-6">
+                    <div class="statistic-block block">
+                      <div class="progress-details d-flex align-items-end justify-content-between">
+                        <div class="title">
+                          <div class="icon"><i class="{{ logo }}"></i> {{ source }}</div><strong>{{ doc_type }}</strong>
+                        </div>
+                        <div class="number dashtext-1">{{ counts[doc_type][source] }}</div>
+                      </div>
+                    </div>
+                  </div>
+                {% endfor %}
+              {% endfor %}
+            </div>
+          </div>
+        </section>
+        {% endif %}
+    
+        <section class="no-padding-top no-padding-bottom">
+          <div class="container-fluid">
+            <div class="row">
+              <form class="col-md-12" action="/leaks" method="POST">
+                <div class="form-group">
+                  <div class="input-group">
+                    <input name="query_data" type="text" class="form-control">
+                    <div class="input-group-append">
+                      <select name="query_type" class="form-control">
+                        <option>credentials</option>
+                        <option>mails</option>
+                        <option>domains</option>
+                        </select>
+                      <input type="submit" class="btn btn-primary" value="search"></input>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </section>
+
+        {% if query %}
+        <section class="no-padding-top no-padding-bottom">
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col-md-12 input-group">
+                <div class="input-group-prepend"><span class="input-group-text">Query:</span></div>
+                <div class="input-group-append"><span class="input-group-text">{{ query[0] }}</span></div>
+                <div class="input-group-prepend"><span class="input-group-text">Type:</span></div>
+                <div class="input-group-append"><span class="input-group-text">{{ query[1] }}</span></div>
+                <div class="input-group-prepend"><span class="input-group-text">Results:</span></div>
+                <div class="input-group-append"><span class="input-group-text">0</span></div>
+              </div>
+            </div>
+          </div>
+        </section>
+        {% endif %}
+
+        <footer class="footer">
+            {% include 'footer.html' %}
+        </footer>
+      </div>
+    </div>
+    <!-- JavaScript files-->
+    {% include 'javascript.html' %}
+  </body>
+</html>

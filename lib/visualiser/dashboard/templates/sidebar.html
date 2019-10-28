@@ -1,0 +1,11 @@
+<!-- Sidebar Navidation Menus--><span class="heading">Main</span>
+<ul class="list-unstyled">
+{% for class, href, icon, caption, id in [('', '/', 'icon-home', 'Home', '/'), ('active', '/leaks', 'fa fa-id-card', 'Leaks', '/leaks')] %}
+    <li {% if id == active_page %} class="active"{% endif %}><a href="{{ href }}"> <i class="{{ icon }}"></i>{{ caption }}</a></li>
+{% endfor %}
+</ul><span class="heading">Extras</span>
+<ul class="list-unstyled">
+{% for class, href, icon, caption, id in [('', '/dorks', 'fa fa-search', 'Dorks', '/dorks')] %}
+    <li {% if id == active_page %} class="active"{% endif %}><a href="{{ href }}"> <i class="{{ icon }}"></i>{{ caption }}</a></li>
+{% endfor %}
+</ul>

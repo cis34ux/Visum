@@ -1,0 +1,96 @@
+version: '3'
+
+services:
+
+  rabbitmq:
+    hostname: "rabbitmq"
+    image: "rabbitmq:3-management"
+    volumes:
+      - ./lib/rabbitmq/rabbitmq-isolated.conf:/etc/rabbitmq/rabbitmq.config
+
+  elasticsearch:
+    hostname: "elasticsearch"
+    build:
+      context: lib/elasticsearch/
+      args:
+        ELK_VERSION: $ELK_VERSION
+    volumes:
+      - ./lib/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+      - ./storage/elasticsearch/data/:/usr/share/elasticsearch/data
+    environment:
+      ES_JAVA_OPTS: "-Xmx256m -Xms256m"
+      ELASTIC_PASSWORD: "changeme"
+ 
+  neo4j:
+    hostname: "neo4j"
+    image: "neo4j:3.5"
+    volumes:
+      - ./storage/neo4j/data/:/data/
+      - ./storage/neo4j/import/:/var/lib/neo4j/import/
+      - ./storage/neo4j/plugins/:/plugins/
+      - ./log/neo4j/:/logs/
+    environment:
+      NEO4J_AUTH: "neo4j/changeme"
+
+  dashboard:
+    build:
+      context: lib/visualiser/
+      dockerfile: docker/Dockerfile
+      args:
+        APPLICATION: "dashboard"
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./lib/visualiser/dashboard/:/app/
+      - ./log/visualiser/dashboard/:/app/log/
+    depends_on:
+      - "elasticsearch"
+    restart: always
+
+  pastebin_scraper:
+    build:
+      context: lib/collectors/
+      dockerfile: docker/Dockerfile
+      args:
+        APPLICATION: "pastebin"
+        APPLICATION_TYPE: "scraper"
+    volumes:
+      - ./log/collectors/pastebin/scraper/:/app/log/
+    depends_on:
+      - "rabbitmq"
+      - "elasticsearch"
+    restart: always
+
+  pastebin_downloader:
+    build:
+      context: lib/collectors/
+      dockerfile: docker/Dockerfile
+      args:
+        APPLICATION: "pastebin"
+        APPLICATION_TYPE: "downloader"
+    volumes:
+      - ./log/collectors/pastebin/downloader/:/app/log/
+      - ./tmp/collectors/pastebin/:/app/tmp/
+    depends_on:
+      - "rabbitmq"
+      - "elasticsearch"
+    restart: always
+  
+  pastebin_parser:
+    build:
+      context: lib/collectors/
+      dockerfile: docker/Dockerfile
+      args:
+        APPLICATION: "pastebin"
+        APPLICATION_TYPE: "parser"
+    deploy:
+      mode: replicated
+      replicas: 2
+    volumes:
+      - ./log/collectors/pastebin/parser/:/app/log/
+      - ./tmp/collectors/pastebin/:/app/tmp/
+      - ./storage/collectors/pastebin/:/app/storage
+    depends_on:
+      - "rabbitmq"
+      - "elasticsearch"
+    restart: always

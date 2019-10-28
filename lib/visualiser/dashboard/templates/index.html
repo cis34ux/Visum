@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+{% set active_page = url_for(request.endpoint) %}
+<html>
+  <head> 
+    {% include 'head.html' %}
+  </head>
+  <body>
+    <header class="header">   
+        {% include 'header.html' %}
+    </header>
+    <div class="d-flex align-items-stretch">
+      <!-- Sidebar Navigation-->
+      <nav id="sidebar">
+          {% include 'sidebar.html' %}
+      </nav>
+      <!-- Sidebar Navigation end-->
+      <div class="page-content">
+        <!-- Breadcrumb-->
+        {% include 'breadcrumb.html' %}
+
+        <section class="no-padding-top no-padding-bottom">
+          <div class="container-fluid">
+            <div class="messages-block block">
+              <div class="title"><strong>Sources</strong></div>
+              <div class="messages">
+                {% for source in sources %}
+                  <a href="#" class="message d-flex align-items-center">
+                    <div class="profile"><img src="{{ sources[source]['logo'] }}" alt="..." class="img-fluid">
+                      {% if sources[source]['is_up'] == True %}
+                        <div class="status online"></div>
+                      {% else %}
+                        <div class="status busy"></div>
+                      {% endif %}
+                    </div>
+                    <div class="content">
+                      <strong class="d-block">{{ source }}</strong><small class="d-block">url: {{ sources[source]['url'] }}</small>
+                    </div>
+                  </a>
+                {% endfor %}
+            </div>
+          </div>
+        </section>
+
+        <footer class="footer">
+            {% include 'footer.html' %}
+        </footer>
+      </div>
+    </div>
+    <!-- JavaScript files-->
+    {% include 'javascript.html' %}
+  </body>
+</html>
